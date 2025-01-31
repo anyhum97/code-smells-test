@@ -1,10 +1,8 @@
 using Castle.Windsor;
 using Common.Logging;
-using MP.Domain.Object;
 using MP.WS.Windsor;
 using System;
 using System.Web.Services.Protocols;
-using MP.WS.Windsor.FactoryInterfaces;
 
 namespace MP.WS.Old_App_Code
 {
@@ -25,11 +23,6 @@ namespace MP.WS.Old_App_Code
         protected IWindsorContainer GetContainer()
         {
             return ContainerContainer.Get();
-        }
-
-        protected IManagerFactory GetTicketManagerFactory()
-        {
-            return ContainerContainer.Get().Resolve<IManagerFactory>();
         }
 
         protected SoapException WrapException(Exception ex)

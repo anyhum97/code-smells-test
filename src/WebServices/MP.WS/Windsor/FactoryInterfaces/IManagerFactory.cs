@@ -4,6 +4,6 @@ namespace MP.WS.Windsor.FactoryInterfaces
 {
     public interface IManagerFactory
     {
-        TicketManager Create(string context);
+        T Create<T>(string context) where T : IManager;
     }
 }

@@ -1,11 +1,12 @@
 using MP.Domain.Model;
+using MP.Domain.Object;
 using MP.Model.WS;
 using MP.WS.Old_App_Code;
 using MP.WS.Windsor.Adapter;
+using MP.WS.Windsor.FactoryInterfaces;
 using System;
 using System.Linq;
 using System.Web.Services;
-using MP.Domain.Object;
 
 namespace MP.WS
 {
@@ -25,7 +26,7 @@ namespace MP.WS
         {
             try
             {
-                var ticketManager = GetTicketManagerFactory().Create("MP");
+                var ticketManager = GetContainer().Resolve<IManagerFactory>().Create<TicketManager>("MP");
                 var tickets = ticketManager.GetTickets();
 
                 var windsorContainer = GetContainer();
@@ -78,7 +79,7 @@ namespace MP.WS
                     VisitorsNumber = arg.VisitorsNumber
                 };
 
-                var ticketManager = GetTicketManagerFactory().Create("MP");
+                var ticketManager = GetContainer().Resolve<IManagerFactory>().Create<TicketManager>("MP");
 
                 ticketManager.AddTicket(ticket);
 
