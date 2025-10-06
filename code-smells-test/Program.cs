@@ -5,6 +5,8 @@ using Serilog;
 using code_smells_test.Data;
 using code_smells_test.Repositories;
 using code_smells_test.Repositories.Interfaces;
+using code_smells_test.Services.Interfaces;
+using code_smells_test.Services;
 
 namespace code_smells_test
 {
@@ -23,6 +25,9 @@ namespace code_smells_test
 			builder.Services.AddDbContext<AppDbContext>(options =>
 				options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+			builder.Services.AddHttpContextAccessor();
+
+			builder.Services.AddScoped<ITimeZoneService, TimeZoneService>();
 			builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
 			builder.Host.UseSerilog();

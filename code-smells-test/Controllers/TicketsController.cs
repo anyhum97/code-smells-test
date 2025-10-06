@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+using code_smells_test.Services.Interfaces;
 using code_smells_test.Repositories.Interfaces;
 using code_smells_test.Models;
 
@@ -10,10 +11,12 @@ namespace code_smells_test.Controllers
 	public class TicketsController : ControllerBase
 	{
 		private readonly ITicketRepository _ticketRepository;
+		private readonly ITimeZoneService _timeZoneService;
 
-		public TicketsController(ITicketRepository ticketRepository)
+		public TicketsController(ITicketRepository ticketRepository, ITimeZoneService timeZoneService)
 		{
 			_ticketRepository = ticketRepository;
+			_timeZoneService = timeZoneService;
 		}
 
 		[HttpGet("all")]
@@ -25,19 +28,21 @@ namespace code_smells_test.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult>AddTicket([FromBody] Ticket ticket)
+		public async Task<IActionResult> AddTicket([FromBody] Ticket ticket)
 		{
-			if(!ModelState.IsValid)
-			{
+			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
-			}
 
 			ArgumentException.ThrowIfNullOrWhiteSpace(ticket.Title);
 
+			// Конвертируем локальную дату клиента в UTC перед сохранением
+			ticket.VisitDate = _timeZoneService.ConvertToUtc(ticket.VisitDate);
+			ticket.CreationDate = DateTime.UtcNow;
+
 			if(ticket.VisitDate < DateTime.UtcNow)
-            {
-                throw new Exception("Ticket creation in the past is disabled");
-            }
+			{
+				throw new Exception("Ticket creation in the past is disabled");
+			}
 
 			await _ticketRepository.AddTicketAsync(ticket);
 
